@@ -118,7 +118,7 @@ def scrap(url):
 
     Published=BeautifulSoup(str(suit[2])).text
 
-    Titre= titre(Text)
+    Title= titre(Text)
     Awarding_Authority=Awarding(Text)
     try:
         Contact_Type =contact_type(Text)
