@@ -181,7 +181,7 @@ def scrap_now(url):
           "Published":unicode(Published),\
           "Awarding Authority":unicode(Awarding_Authority),\
           "Contact Type":unicode(),\
-          "Decription":unicode(Description),\
+          "Description":unicode(Description),\
           "CVP Codes":unicode(),\
           "NUTS Codes":unicode(),\
           "Main Site or Location of Works":unicode(),\
