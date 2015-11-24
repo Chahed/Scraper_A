@@ -1,8 +1,12 @@
 from bs4 import BeautifulSoup
+<<<<<<< HEAD
 from urllib.request import urlopen
 from splinter import Browser
 import time
 import random
+=======
+from urllib import urlopen
+>>>>>>> origin/master
 import scraperwiki
 
 def dateclean(date):
@@ -127,7 +131,7 @@ def scrap(url):
         Contact_Type =contact_type(Text)
     except:
         Contact_Type =""
-    Decription = descpription(Text)
+    Description = descpription(Text)
     CVP_Codes = cvp(Text)
     NUTS_Codes= nuts(Text)
     Main_Site_or_Location_of_Works=Main(Text)
@@ -152,7 +156,7 @@ def scrap(url):
           "Published clean":unicode(Published_clean),\
           "Awarding Authority":unicode(Awarding_Authority),\
           "Contact Type":unicode(Contact_Type),\
-          "Decription":unicode(Decription),\
+          "Description":unicode(Description),\
           "CVP Codes":unicode(CVP_Codes),\
           "NUTS Codes":unicode(NUTS_Codes),\
           "Main Site or Location of Works":unicode(Main_Site_or_Location_of_Works),\
@@ -249,8 +253,49 @@ def main():
                 scrap_now(i)
 
 
+def scrap_now(url):
+    response = urlopen(url)
+    htmltext = BeautifulSoup(response)
+    Id=getId(url)
 
+    suit =htmltext.find('div',{"id":"content1"}).findAll('label')
+    Description= BeautifulSoup(str(suit[3])).text
+    Description=Description
+
+    Published=BeautifulSoup(str(suit[2])).text
+
+    Title=BeautifulSoup(str(suit[0])).text
+    Awarding_Authority=BeautifulSoup(str(suit[1])).text
+
+    data={"ID":unicode(Id), \
+          "Url":unicode(url),\
+          "Title":unicode(Title),\
+          "Published":unicode(Published),\
+          "Awarding Authority":unicode(Awarding_Authority),\
+          "Contact Type":unicode(),\
+          "Description":unicode(Description),\
+          "CVP Codes":unicode(),\
+          "NUTS Codes":unicode(),\
+          "Main Site or Location of Works":unicode(),\
+          "Reference Attributed by the Awarding Authority":unicode(),\
+          "Estimated Value of Requirement":unicode(),\
+          "Deadline for Expression of Interest":unicode(),\
+          "Address to which they must be sent":unicode(),\
+          "Other Information":unicode(),\
+          "Description of Amendment":unicode()}
+    scraperwiki.sqlite.save(unique_keys=['ID'], data=data)
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     main()
 
+=======
+    lis=["http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=108456102","http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=141938986",
+    "http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=80347654","http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=57046877",
+    "http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=64179696"]
+    for i in lis :
+        try:
+            scrap(i)
+        except:
+            scrap_now(i)
+>>>>>>> origin/master
