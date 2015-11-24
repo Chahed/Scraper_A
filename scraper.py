@@ -127,7 +127,7 @@ def scrap(url):
         Contact_Type =contact_type(Text)
     except:
         Contact_Type =""
-    Description = descpription(Text)
+    Decription = descpription(Text)
     CVP_Codes = cvp(Text)
     NUTS_Codes= nuts(Text)
     Main_Site_or_Location_of_Works=Main(Text)
@@ -144,7 +144,7 @@ def scrap(url):
         Description_of_Amendment=amendment(Text)
     except:
         Description_of_Amendment=""
-
+    print ("scrap= "+url)
     data={"ID":unicode(Id), \
           "Url":unicode(url),\
           "Title":unicode(Title),\
@@ -152,7 +152,7 @@ def scrap(url):
           "Published clean":unicode(Published_clean),\
           "Awarding Authority":unicode(Awarding_Authority),\
           "Contact Type":unicode(Contact_Type),\
-          "Description":unicode(Description),\
+          "Decription":unicode(Decription),\
           "CVP Codes":unicode(CVP_Codes),\
           "NUTS Codes":unicode(NUTS_Codes),\
           "Main Site or Location of Works":unicode(Main_Site_or_Location_of_Works),\
@@ -179,7 +179,7 @@ def scrap_now(url):
 
     Title=BeautifulSoup(str(suit[0])).text
     Awarding_Authority=BeautifulSoup(str(suit[1])).text
-
+    print ("scrapnew= "+url)
     data={"ID":unicode(Id), \
           "Url":unicode(url),\
           "Title":unicode(Title),\
@@ -249,51 +249,8 @@ def main():
                 scrap_now(i)
 
 
-def scrap_now(url):
-    response = urlopen(url)
-    htmltext = BeautifulSoup(response)
-    Id=getId(url)
-
-    suit =htmltext.find('div',{"id":"content1"}).findAll('label')
-    Description= BeautifulSoup(str(suit[3])).text
-    Description=Description
-
-    Published=BeautifulSoup(str(suit[2])).text
-
-    Title=BeautifulSoup(str(suit[0])).text
-    Awarding_Authority=BeautifulSoup(str(suit[1])).text
-
-    data={"ID":unicode(Id), \
-          "Url":unicode(url),\
-          "Title":unicode(Title),\
-          "Published":unicode(Published),\
-          "Awarding Authority":unicode(Awarding_Authority),\
-          "Contact Type":unicode(),\
-          "Description":unicode(Description),\
-          "CVP Codes":unicode(),\
-          "NUTS Codes":unicode(),\
-          "Main Site or Location of Works":unicode(),\
-          "Reference Attributed by the Awarding Authority":unicode(),\
-          "Estimated Value of Requirement":unicode(),\
-          "Deadline for Expression of Interest":unicode(),\
-          "Address to which they must be sent":unicode(),\
-          "Other Information":unicode(),\
-          "Description of Amendment":unicode()}
-    scraperwiki.sqlite.save(unique_keys=['ID'], data=data)
-
-def main():
-    urls = ['http://noticesearch.supply4nwfire.org.uk/noticeSearch/noticeSearchResults.html?page=1']
-
-    for link in urls:
-        href=Navigation(link)
-        for i in href:
-            try:
-                scrap(i)
-            except:
-                scrap_now(i)
-
-
 
 
 if __name__ == '__main__':
     main()
+
