@@ -281,17 +281,19 @@ def scrap_now(url):
           "Description of Amendment":unicode()}
     scraperwiki.sqlite.save(unique_keys=['ID'], data=data)
 
-if __name__ == '__main__':
-<<<<<<< HEAD
-    main()
+def main():
+    urls = ['http://noticesearch.supply4nwfire.org.uk/noticeSearch/noticeSearchResults.html?page=1']
 
-=======
-    lis=["http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=108456102","http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=141938986",
-    "http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=80347654","http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=57046877",
-    "http://noticesearch.supply4nwfire.org.uk/noticeSearch/viewNotice.html?displayNoticeId=64179696"]
-    for i in lis :
-        try:
-            scrap(i)
-        except:
-            scrap_now(i)
->>>>>>> origin/master
+    for link in urls:
+        href=Navigation(link)
+        for i in href:
+            try:
+                scrap(i)
+            except:
+                scrap_now(i)
+
+
+
+
+if __name__ == '__main__':
+    main()
