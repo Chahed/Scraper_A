@@ -1,12 +1,8 @@
 from bs4 import BeautifulSoup
-<<<<<<< HEAD
-from urllib.request import urlopen
+from urllib import urlopen
 from splinter import Browser
 import time
 import random
-=======
-from urllib import urlopen
->>>>>>> origin/master
 import scraperwiki
 
 def dateclean(date):
