@@ -23,17 +23,13 @@ def dateclean(date):
 def datecleannow(date):
     a=date.split(' ')
     d=a[1].split('/')
-    return d[2].strip(" ")+'-'+d[1].strip(" ")+'-'+d[0].strip(" ")
+    return d[2].strip()+'-'+d[1].strip()+'-'+d[0].strip()
 
 def convertirUrl(url):
     l= url.split('/')
     newurl= l[0]+'//'+l[2]+'/'+l[3]+'/'
     return newurl
 
-def duration(Text):
-    a=Text.split("II.3)Duration Of The Contract Or Time-Limit For Completion")
-    b=a[1].split("Information About Lots")
-    return b[0]
 
 def getId(Url):
     url= Url.split('=')
@@ -48,7 +44,7 @@ def titre(Text):
 def Awarding(Text):
     a= Text.split("2.")
     b= a[1].split("3.")
-    c= b[0].split('<br></br>')
+    c= b[0].split('<br/>')
     return c[1]
 
 def contact_type(Text):
@@ -69,28 +65,16 @@ def cvp(Text):
     c= b[0].split('CPV Codes:')
     return c[1]
 
-def duration(Text):
-    a=Text.split("II.3)Duration Of The Contract Or Time-Limit For Completion")
-    b=a[1].split("Information About Lots")
+def cvpnow(Text):
+    a=Text.split("II.1.6)Common Procurement Vocabulary:")
+    b=a[1].split("II.1.7)")
     return b[0]
-
-def deadlinenew(Text):
-    a= Text.split("IV.3.4)Time-limit for receipt of tenders or requests to participate")
-    b= a[1].split("VI.3.5)")
-    c=b[0].split("Date: ")
-    d=c[1].split("Time: ")
-    return d[0]
 
 def nuts(Text):
     a= Text.split("6.")
     b= a[1].split("7.")
     c= b[0].split('NUTS Codes :')
     return c[1]
-
-def cvpnow(Text):
-    a=Text.split("II.1.6)Common Procurement Vocabulary:")
-    b=a[1].split("II.1.7)")
-    return b[0]
 
 def Main(Text):
     a= Text.split("7.")
@@ -116,11 +100,23 @@ def deadline(Text):
     c= b[0].split('Deadline for Expression of Interest:')
     return c[1]
 
+def deadlinenew(Text):
+    a= Text.split("IV.3.4)Time-limit for receipt of tenders or requests to participate")
+    b= a[1].split("VI.3.5)")
+    c=b[0].split("Date: ")
+    d=c[1].split("Time: ")
+    return d[0]
+
 def address(Text):
     a= Text.split("11.")
     b= a[1].split("12.")
     c= b[0].split('Address to which they must be sent:')
     return c[1]
+
+def duration(Text):
+    a=Text.split("II.3)Duration Of The Contract Or Time-Limit For Completion")
+    b=a[1].split("Information About Lots")
+    return b[0]
 
 def other12(Text):
     a= Text.split("12.")
