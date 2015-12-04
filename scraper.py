@@ -176,6 +176,7 @@ def scrap(url):
         Description_of_Amendment=suittext(amendment(Text))
     except:
         Description_of_Amendment=""
+    
     data={"ID":unicode(Id), \
           "Url":unicode(url),\
           "Title":unicode(Title),\
