@@ -5,20 +5,35 @@ import time
 import random
 import scraperwiki
 
+def suittext(text):
+    text=text.replace(", ,","")
+    text=text.replace("'","")
+    text=text.replace("  ","")
+    text=text.replace("u\\n","")
+    text=text.replace("\\r"," ")
+    text=text.replace("[","")
+    text=text.replace("]","")
+    text=text.replace("\t","")
+    return text
+
 def dateclean(date):
-    d=date.split('/')
-    return d[2]+'-'+d[1]+'-'+d[0]
+    d=suittext(date).split('/')
+    return d[2].strip()+'-'+d[1].strip()+'-'+d[0].strip()
 
 def datecleannow(date):
     a=date.split(' ')
     d=a[1].split('/')
-    return d[2]+'-'+d[1]+'-'+d[0]
+    return d[2].strip(" ")+'-'+d[1].strip(" ")+'-'+d[0].strip(" ")
 
 def convertirUrl(url):
     l= url.split('/')
     newurl= l[0]+'//'+l[2]+'/'+l[3]+'/'
     return newurl
 
+def duration(Text):
+    a=Text.split("II.3)Duration Of The Contract Or Time-Limit For Completion")
+    b=a[1].split("Information About Lots")
+    return b[0]
 
 def getId(Url):
     url= Url.split('=')
@@ -33,7 +48,7 @@ def titre(Text):
 def Awarding(Text):
     a= Text.split("2.")
     b= a[1].split("3.")
-    c= b[0].split('Authority:')
+    c= b[0].split('<br></br>')
     return c[1]
 
 def contact_type(Text):
@@ -54,11 +69,28 @@ def cvp(Text):
     c= b[0].split('CPV Codes:')
     return c[1]
 
+def duration(Text):
+    a=Text.split("II.3)Duration Of The Contract Or Time-Limit For Completion")
+    b=a[1].split("Information About Lots")
+    return b[0]
+
+def deadlinenew(Text):
+    a= Text.split("IV.3.4)Time-limit for receipt of tenders or requests to participate")
+    b= a[1].split("VI.3.5)")
+    c=b[0].split("Date: ")
+    d=c[1].split("Time: ")
+    return d[0]
+
 def nuts(Text):
     a= Text.split("6.")
     b= a[1].split("7.")
     c= b[0].split('NUTS Codes :')
     return c[1]
+
+def cvpnow(Text):
+    a=Text.split("II.1.6)Common Procurement Vocabulary:")
+    b=a[1].split("II.1.7)")
+    return b[0]
 
 def Main(Text):
     a= Text.split("7.")
@@ -117,34 +149,33 @@ def scrap(url):
     Id=getId(url)
     suit =htmltext.find('div',{"id":"content1"}).findAll('label')
     Text= BeautifulSoup(str(suit[3])).text
+    Text2= str(suit[3])
+    Published=suittext(BeautifulSoup(str(suit[2])).text)
+    Published_clean=suittext(dateclean(Published))
 
-    Published=BeautifulSoup(str(suit[2])).text
-    Published_clean=dateclean(Published)
-
-    Title= titre(Text)
-    Awarding_Authority=Awarding(Text)
+    Title= suittext(titre(Text))
+    Awarding_Authority=suittext(Awarding(Text2))
     try:
-        Contact_Type =contact_type(Text)
+        Contact_Type =suittext(contact_type(Text))
     except:
         Contact_Type =""
-    Decription = descpription(Text)
-    CVP_Codes = cvp(Text)
-    NUTS_Codes= nuts(Text)
-    Main_Site_or_Location_of_Works=Main(Text)
-    Reference_Attributed_by_the_Awarding_Authority=reference(Text)
-    Estimated_Value_of_Requirement=estimated(Text)
-    Deadline_for_Expression_of_Interest=deadline(Text)
-    Deadline_for_Expression_of_Interest_clean=datecleannow(Deadline_for_Expression_of_Interest)
-    Address_to_which_they_must_be_sent=address(Text)
+    Decription = suittext(descpription(Text))
+    CPV_Codes = suittext(cvp(Text))
+    NUTS_Codes= suittext(nuts(Text))
+    Main_Site_or_Location_of_Works=suittext(Main(Text))
+    Reference_Attributed_by_the_Awarding_Authority=suittext(reference(Text))
+    Estimated_Value_of_Requirement=suittext(estimated(Text))
+    Deadline_for_Expression_of_Interest=suittext(deadline(Text))
+    Deadline_for_Expression_of_Interest_clean=suittext(datecleannow(Deadline_for_Expression_of_Interest))
+    Address_to_which_they_must_be_sent=suittext(address(Text))
     try:
-        Other_Information=other13(Text)
+        Other_Information=suittext(other13(Text))
     except:
-        Other_Information=other12(Text)
+        Other_Information=suittext(other12(Text))
     try :
-        Description_of_Amendment=amendment(Text)
+        Description_of_Amendment=suittext(amendment(Text))
     except:
         Description_of_Amendment=""
-    print ("scrap= "+url)
     data={"ID":unicode(Id), \
           "Url":unicode(url),\
           "Title":unicode(Title),\
@@ -153,7 +184,7 @@ def scrap(url):
           "Awarding Authority":unicode(Awarding_Authority),\
           "Contact Type":unicode(Contact_Type),\
           "Decription":unicode(Decription),\
-          "CVP Codes":unicode(CVP_Codes),\
+          "CPV Codes":unicode(CPV_Codes),\
           "NUTS Codes":unicode(NUTS_Codes),\
           "Main Site or Location of Works":unicode(Main_Site_or_Location_of_Works),\
           "Reference Attributed by the Awarding Authority":unicode(Reference_Attributed_by_the_Awarding_Authority),\
@@ -162,15 +193,17 @@ def scrap(url):
           "Deadline for Expression of Interest clean":unicode(Deadline_for_Expression_of_Interest_clean),\
           "Address to which they must be sent":unicode(Address_to_which_they_must_be_sent),\
           "Other Information":unicode(Other_Information),\
-          "Description of Amendment":unicode(Description_of_Amendment)}
+          "Description of Amendment":unicode(Description_of_Amendment),\
+          "Duration Of The Contract Or Time Limit For Completion":unicode()}
     scraperwiki.sqlite.save(unique_keys=['ID'], data=data)
-
+      
 def scrap_now(url):
     response = urlopen(url)
     htmltext = BeautifulSoup(response)
     Id=getId(url)
 
     suit =htmltext.find('div',{"id":"content1"}).findAll('label')
+    Text= BeautifulSoup(str(suit[3])).text
     Description= BeautifulSoup(str(suit[3])).text
     Description=Description.encode('ascii','ignore')
 
@@ -179,7 +212,24 @@ def scrap_now(url):
 
     Title=BeautifulSoup(str(suit[0])).text
     Awarding_Authority=BeautifulSoup(str(suit[1])).text
-    print ("scrapnew= "+url)
+    try:
+        CPV_Codes = suittext(cvpnow(Text))
+    except:
+        CPV_Codes=""
+    try:
+        Deadline_for_Expression_of_Interest=suittext(deadlinenew(Text))
+    except :
+        Deadline_for_Expression_of_Interest=""
+    if Deadline_for_Expression_of_Interest!="":
+        Deadline_for_Expression_of_Interest_clean=suittext(dateclean(Deadline_for_Expression_of_Interest))
+    else :
+        Deadline_for_Expression_of_Interest_clean=""
+    try:
+        Duration_Of_The_Contract_Or_Time_Limit_For_Completion=suittext(duration(Text))
+    except:
+        Duration_Of_The_Contract_Or_Time_Limit_For_Completion=""
+
+    
     data={"ID":unicode(Id), \
           "Url":unicode(url),\
           "Title":unicode(Title),\
@@ -188,21 +238,20 @@ def scrap_now(url):
           "Awarding Authority":unicode(Awarding_Authority),\
           "Contact Type":unicode(),\
           "Decription":unicode(Description),\
-          "CVP Codes":unicode(),\
+          "CPV Codes":unicode(CPV_Codes),\
           "NUTS Codes":unicode(),\
           "Main Site or Location of Works":unicode(),\
           "Reference Attributed by the Awarding Authority":unicode(),\
           "Estimated Value of Requirement":unicode(),\
-          "Deadline for Expression of Interest":unicode(),\
-          "Deadline for Expression of Interest clean":unicode(),\
+          "Deadline for Expression of Interest":unicode(Deadline_for_Expression_of_Interest),\
+          "Deadline for Expression of Interest clean":unicode(Deadline_for_Expression_of_Interest_clean),\
           "Address to which they must be sent":unicode(),\
           "Other Information":unicode(),\
-          "Description of Amendment":unicode()}
+          "Description of Amendment":unicode(),\
+          "Duration Of The Contract Or Time Limit For Completion":unicode(Duration_Of_The_Contract_Or_Time_Limit_For_Completion)}
     scraperwiki.sqlite.save(unique_keys=['ID'], data=data)
 
-
-
-def Navigation(link):
+def  Navigation(link):
     with Browser("phantomjs", service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any']) as browser:
         browser.driver.set_window_size(1280, 1024)
         browser.visit(link)
@@ -216,7 +265,6 @@ def Navigation(link):
         links = soop.findAll('a')
         href=[]
         for i in range(0,len(links)-1):
-            print (convertirUrl(link)+links[i].get('href'))
             href.append(convertirUrl(link)+links[i].get('href'))
         j=1
         try:
@@ -230,7 +278,6 @@ def Navigation(link):
                 soop = htmltext.find('table',{"id":"noticeResults"}).findNext('tbody')
                 links = soop.findAll('a')
                 for i in range(0,len(links)-1):
-                    print (convertirUrl(link)+links[i].get('href'))
                     href.append(convertirUrl(link)+links[i].get('href'))
 
         except:
@@ -253,4 +300,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
